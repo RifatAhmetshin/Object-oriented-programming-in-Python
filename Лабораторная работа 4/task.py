@@ -1,29 +1,64 @@
-import numpy as np
-import matplotlib.pyplot as plt
+class ElectronicDevice:
 
-# Данные
-KSV = np.array([1.6, 1.5, 1.67, 1.38, 1.3, 1.32, 1.45])
-f = np.array([520, 540, 560, 530, 480, 470, 460])
+    def __init__(self, brand: str, model: str, power: int):
+        self._brand = brand  # Инкапсуляция, чтобы предотвратить прямое изменение бренда.
+        self.model = model
+        self.power = power
 
-# Квадратичная аппроксимация
-coeffs = np.polyfit(f, KSV, 2)  # Коэффициенты для квадратичной аппроксимации
-poly = np.poly1d(coeffs)  # Создаем полином
+    def __str__(self) -> str:
+        return f"{self._brand} {self.model} ({self.power}W)"
 
-# Новые точки для гладкой кривой
-f_new = np.linspace(min(f), max(f), 500)
-KSV_new = poly(f_new)
+    def __repr__(self) -> str:
+        return f"ElectronicDevice(brand={self._brand}, model={self.model}, power={self.power})"
 
-# Строим график
-plt.plot(f_new, KSV_new, label='Квадратичная аппроксимация', color='b')
-plt.scatter(f, KSV, color='red', label='Исходные точки')
+    def turn_on(self) -> str:
+        """Включить устройство."""
+        return f"{self._brand} {self.model} is now ON."
 
-# Подписываем оси
-plt.xlabel("Частота (MHz)")
-plt.ylabel("КСВ")
+    def turn_off(self) -> str:
+        """Выключить устройство."""
+        return f"{self._brand} {self.model} is now OFF."
 
-# Легенда и сетка
-plt.legend()
-plt.grid(True)
 
-# Показать график
-plt.show()
+class Smartphone(ElectronicDevice):
+
+    def __init__(self, brand: str, model: str, power: int, os: str, battery_capacity: int):
+        super().__init__(brand, model, power)
+        self.os = os
+        self.battery_capacity = battery_capacity
+
+    def __str__(self) -> str:
+        return f"{self._brand} {self.model} ({self.os}, {self.battery_capacity}mAh)"
+
+    def charge(self) -> str:
+        """Зарядка устройства."""
+        return f"{self._brand} {self.model} is charging."
+
+
+class Laptop(ElectronicDevice):
+
+    def __init__(self, brand: str, model: str, power: int, screen_size: float, is_touchscreen: bool):
+        super().__init__(brand, model, power)
+        self.screen_size = screen_size
+        self.is_touchscreen = is_touchscreen
+
+    def __str__(self) -> str:
+        return f"{self._brand} {self.model} ({self.screen_size}-inch, Touchscreen: {self.is_touchscreen})"
+
+    def turn_on(self) -> str:
+        """
+        Переопределение метода включения устройства.
+        Причина: у ноутбуков процесс включения может включать загрузку операционной системы.
+        """
+        return f"{self._brand} {self.model} is booting up..."
+
+
+if __name__ == "__main__":
+    phone = Smartphone("Apple", "iPhone 14", 20, "iOS", 3200)
+    laptop = Laptop("Dell", "XPS 13", 65, 13.4, True)
+
+    print(phone)
+    print(phone.charge())
+
+    print(laptop)
+    print(laptop.turn_on())
